@@ -1,6 +1,11 @@
-# CE C/C++ Toolchain  [![Build Status](https://github.com/CE-Programming/toolchain/workflows/Win/Mac/Linux/badge.svg?branch=llvm&event=push)](https://github.com/CE-Programming/toolchain/workflows/Win/Mac/Linux/badge.svg?event=push) [![Discord Chat Link](https://img.shields.io/discord/432891584451706892?logo=discord)](https://discord.gg/TRkN5UcUzs)
+# CE C/C++ Toolchain  
+[Forked from [CE-Programming/toolchain](https://github.com/CE-Programming/toolchain)]
 
 The CE Toolchain incorporates a variety of tools in order to build programs in C/C++ natively for the TI-84 Plus CE calculator series.
+
+## Purpose of this fork
+Restores the missing v11.3 build for some TI-84 Plus CE applications that requires them.
+Example additional files include: i48stubs.src, inchar.src,...
 
 ## Getting Started
 
@@ -19,3 +24,10 @@ In that case, post your questions [here](https://github.com/CE-Programming/toolc
 
 Documentation for contributing/building the toolchain can be found [here](https://ce-programming.github.io/toolchain/static/contributing.html).
 
+**For v11.3:**
+(The missing build on the original repo)
+
+Facilitates and also contains patched libs for khiCAS TI84PCE Port.
+
+For building: Download v11.3 tag from this fork, rename the folder to toolchain,
+use the additional libs below and copy to toolchain/src/libc (credits to Bernard Parisse)

@@ -14,6 +14,8 @@
  * coefficients are #5077 from Hart & Cheney. (19.56D)
  */
 #include <math.h>
+//#include <debug.h>
+//#undef NDEBUG
 
 #define sq2p1	2.41421356237309e0
 #define sq2m1	0.414213562373095e0
@@ -35,24 +37,36 @@
  * calls the inner routine satan.
  */
 
-float _atanf_c(float arg) {
-	float satan(float);
 
-	if(arg>0) {
-		return(satan(arg));
-	} else {
-		return(-satan(-arg));
-	}
+float _atanf_c(float arg) {  
+  float satan(float);
+  if (arg>=0) 
+    return satan(arg);
+  return -satan(-arg);
 }
 
-double _atan_c(double) __attribute__((alias("_atanf_c")));
+#if 1
 
-/**
- * atan2 discovers what quadrant the angle
- * is in and calls atan.
- */
+float pade_atan(float arg){
+  // pade(atan(x),x,11,6)
+  // (231*x^5+1190*x^3+1155*x)/(25*x^6+525*x^4+1575*x^2+1155)
+  float argsq;
+  float value;
+  argsq = arg*arg;
+  value = ((9.24*argsq+47.6)*argsq+46.2)/(((argsq+21)*argsq+63)*argsq+46.2);
+  return(value*arg);
+}
 
+float satan(float arg) {
+  //dbg_printf("satan %f\n",arg);
+  if (arg<sq2m1)
+    return pade_atan(arg);
+  if (arg>sq2p1)
+    return pio2 - pade_atan(1.0/arg);
+  return pio4+pade_atan((arg-1.0)/(arg+1.0));
+}
 
+#else
 /**
  * xatan evaluates a series valid in the
  * range [-0.414...,+0.414...].
@@ -82,3 +96,14 @@ float satan(float arg) {
 		return(pio4 + xatan((arg-1.0)/(arg+1.0)));
 	}
 }
+
+#endif
+
+double _atan_c(double) __attribute__((alias("_atanf_c")));
+
+/**
+ * atan2 discovers what quadrant the angle
+ * is in and calls atan.
+ */
+
+

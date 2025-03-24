@@ -1,0 +1,14 @@
+#! /bin/bash
+cd ../..
+make
+make install PREFIX=tmp
+cd tmp/lib/libc
+/bin/cp allocator_standard.c.src ~/CEdev/lib/libc
+/bin/cp strtol.c.src ~/CEdev/lib/libc
+/bin/cp tan.c.src ~/CEdev/lib/libc
+/bin/cp sin.c.src ~/CEdev/lib/libc
+/bin/cp exp.c.src ~/CEdev/lib/libc
+/bin/cp log.c.src ~/CEdev/lib/libc
+/bin/cp atan.c.src ~/CEdev/lib/libc
+/bin/cp log1p.c.src ~/CEdev/lib/libc
+# arena_gint.c.src arena_osheap.c.src kmalloc.c.src ~/CEdev/lib/libc

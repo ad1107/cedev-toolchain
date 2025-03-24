@@ -1,0 +1,3 @@
+#! /bin/bash
+tar cvfz celibc.tgz archive mk allocator_standard.c sin.c log.c exp.c tan.c atan.c strtol.c log1p.c
+scp celibc.tgz malherbe:ti

@@ -28,26 +28,35 @@
 
 float _logf_c(float arg)
 {
-	double x,z, zsq, temp;
-	int exp;
-
-	if (arg <= 0.0) {
-		errno = EDOM;
-		return -HUGE_VALF;
-	}
-    x = frexpf(arg, & exp);
-	if ( x < sqrto2 ){
-		x *= 2;
-		exp--;
-	}
-
-	z = (x-1)/(x+1);
-	zsq = z*z;
-
-	temp = ((p3*zsq + p2)*zsq + p1)*zsq + p0;
-	temp = temp/(((1.0*zsq + q2)*zsq + q1)*zsq + q0);
-	temp = temp*z + exp*log2;
-	return temp;
+  double x,z, zsq, temp;
+  int exp;
+  
+  if (arg <= 0.0) {
+    errno = EDOM;
+    return -HUGE_VALF;
+  }
+  x = frexpf(arg, & exp);
+  if ( x < sqrto2 ){
+    x *= 2;
+    exp--;
+  }
+  // now x is in [sqrt(2)/2,sqrt(2)]
+  // ln(x)=ln((1+z)/(1-z)) where z=(x-1)/(x+1) is such that |z|<=3-2*sqrt(2)
+  // = z*sum( (z^2)^k*2/(2k+1),k=0..inf)
+  // for float precision, k=4 is enough, relative precision 2e-9/(1-|z|^2)
+  z = (x-1)/(x+1);
+  zsq = z*z;
+#if 1
+  // seq(2./(2k+1),k,0,5)=[2.0,0.666666666667,0.4,0.285714285714,0.222222222222,0.181818181818]
+  temp = (((0.222222222222*zsq+0.285714285714)*zsq+0.4)*zsq+0.666666666667)*zsq+2.0;
+  temp = temp*z + exp*M_LN2;
+  return temp;
+#else  
+  temp = ((p3*zsq + p2)*zsq + p1)*zsq + p0;
+  temp = temp/(((1.0*zsq + q2)*zsq + q1)*zsq + q0);
+  temp = temp*z + exp*log2;
+  return temp;
+#endif
 }
 
 double _log_c(double) __attribute__((alias("_logf_c")));

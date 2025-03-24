@@ -15,6 +15,43 @@
 
 #include <errno.h>
 #include <math.h>
+#if 1
+float _tanf_c(float arg){
+  // dbg_printf("tan %f\n",arg);
+#define invpi 	1.27323954473516   // 4/pi
+#define pio4	0.785398163397448
+  float temp, e, argsq;
+  int i,sign;
+  
+  sign = 1;
+  if (arg<0.){
+    arg = -arg;
+    sign = -1;
+  }
+  i = arg*invpi;
+  arg -= i*pio4;
+  i &= 3;
+  if (i&1) // pi/4-arg=pi/2-(arg+pi/4) => tan(arg+pi/4)=1/tan(pi/4-arg)
+    arg=pio4-arg;
+  if (i/2)
+    sign=-sign;
+  // P:=pade(tan(x),x,10,6)
+  // (x^5-105*x^3+945*x)/(15*x^4-420*x^2+945)
+  argsq = arg*arg;
+  temp = ((argsq-105)*argsq+945)*arg/((15*argsq-420)*argsq+945);
+  if (i==1 || i==2) {
+    if (temp==0.) {
+      errno = ERANGE;
+      if (sign>0)
+        return HUGE_VALF;
+      return -HUGE_VALF;
+    }
+    temp = 1./temp;
+  }
+  return sign==1?temp:-temp;
+}
+
+#else
 
 #define invpi 	1.27323954473516
 #define p0 	-0.130682026475483e+5
@@ -75,5 +112,6 @@ float _tanf_c(float arg)
 	}
 	return(sign*temp);
 }
+#endif
 
 double _tan_c(double) __attribute__((alias("_tanf_c")));
